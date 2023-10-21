@@ -1,0 +1,58 @@
+---
+name: "Create Release"
+description: "A reusable action to create a GitHub release."
+author: "LizardByte"
+inputs:
+  allowUpdates:
+    description: 'An optional flag which indicates if we should update a release if it already exists.'
+    required: false
+    default: 'true'
+  artifacts:
+    description: 'The artifacts to upload.'
+    required: true
+    default: '*artifacts/*'
+  body:
+    description: 'The body of the release.'
+    required: true
+  discussionCategory:
+    description: 'The category of the discussion.'
+    required: false
+    default: 'announcements'
+  generateReleaseNotes:
+    description: 'Indicates if release notes should be automatically generated.'
+    required: false
+    default: 'false'
+  name:
+    description: 'The version to create.'
+    required: true
+  prerelease:
+    description: 'Whether the release is a prerelease.'
+    required: false
+    default: 'false'
+  tag:
+    description: 'The tag to create.'
+    required: true
+  token:
+    description: 'Github Token.'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Create/Update GitHub Release
+      if: >-
+        github.repository == 'LizardByte/create-release-action' ||
+        (github.event_name == 'push' && github.ref == 'refs/heads/master')
+      uses: ncipollo/release-action@v1.13.0
+      with:
+        allowUpdates: ${{ inputs.allowUpdates }}
+        artifactErrorsFailBuild: true
+        artifacts: ${{ inputs.artifacts }}
+        body: ${{ inputs.body }}
+        commit: ${{ github.sha }}
+        discussionCategory: ${{ inputs.discussionCategory }}
+        generateReleaseNotes: ${{ inputs.generateReleaseNotes }}
+        name: ${{ inputs.name }}
+        prerelease: ${{ inputs.prerelease }}
+        tag: ${{ inputs.tag }}
+        token: ${{ inputs.token }}
