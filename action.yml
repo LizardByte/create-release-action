@@ -9,11 +9,12 @@ inputs:
     default: 'true'
   artifacts:
     description: 'The artifacts to upload.'
-    required: true
+    required: false
     default: '*artifacts/*'
   body:
     description: 'The body of the release.'
-    required: true
+    required: false
+    default: ''
   discussionCategory:
     description: 'The category of the discussion.'
     required: false
