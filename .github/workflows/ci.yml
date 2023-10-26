@@ -15,6 +15,10 @@ concurrency:
 
 jobs:
   action:
+    environment:
+      ${{ github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name != github.repository &&
+      'external' || 'internal' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,7 +30,7 @@ jobs:
         with:
           changelog_path: ./tests/data/set${{ matrix.set }}/CHANGELOG.md
           fail_on_events_api_error: false
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}  # can use GITHUB_TOKEN for read-only access
 
       - name: Set action variables
         id: vars
@@ -35,19 +39,16 @@ jobs:
             discussion_category=tests
             publish_pre_release=true
             release_tag=pr-${{ github.event.pull_request.number }}-${{ github.run_id }}
-            token=${{ secrets.GITHUB_TOKEN }}
           else
             discussion_category=announcements
             publish_pre_release=${{ steps.setup-release.outputs.publish_pre_release }}
             release_tag=${{ steps.setup-release.outputs.release_tag }}
-            token=${{ secrets.GH_BOT_TOKEN }}
           fi
 
           # set outputs
           echo "discussion_category=$discussion_category" >> $GITHUB_OUTPUT
           echo "publish_stable_release=$publish_stable_release" >> $GITHUB_OUTPUT
           echo "release_tag=$release_tag" >> $GITHUB_OUTPUT
-          echo "token=$token" >> $GITHUB_OUTPUT
 
       - name: Run Action
         id: action
@@ -61,15 +62,15 @@ jobs:
           name: ${{ steps.vars.outputs.release_tag }}
           prerelease: ${{ steps.vars.outputs.publish_pre_release == 'true' }}
           tag: ${{ steps.vars.outputs.release_tag }}
-          token: ${{ steps.vars.outputs.token }}
+          token: ${{ secrets.GH_BOT_TOKEN }}
 
       - name: Sleep
         if: ${{ always() && github.event_name == 'pull_request' }}
-        run: sleep 30
+        run: sleep 60
 
       - name: Delete Release
         env:
-          GITHUB_TOKEN: ${{ steps.vars.outputs.token }}
+          GITHUB_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
         if: ${{ always() && github.event_name == 'pull_request' }}
         uses: dev-drprasad/delete-tag-and-release@v0.2.1
         with:
