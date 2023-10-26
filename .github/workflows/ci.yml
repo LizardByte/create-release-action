@@ -72,6 +72,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
         if: ${{ always() && github.event_name == 'pull_request' }}
-        uses: dev-drprasad/delete-tag-and-release@v0.2.1
+        uses: dev-drprasad/delete-tag-and-release@v1.0.1
         with:
           tag_name: ${{ steps.vars.outputs.release_tag }}
