@@ -1,0 +1,22 @@
+---
+# this workflow initializes a secondary workflow that will have access to secrets
+name: CI-init
+
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  initialize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: pass
+        run: exit 0
