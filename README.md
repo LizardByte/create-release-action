@@ -23,17 +23,26 @@ steps:
 
 ## Inputs
 
-| Name                 | Description                                                                          | Default         | Required |
-|----------------------|--------------------------------------------------------------------------------------|-----------------|----------|
-| allowUpdates         | An optional flag which indicates if we should update a release if it already exists. | `true`          | `false`  |
-| artifacts            | The artifacts to upload.                                                             | `*artifacts/*`  | `false`  |
-| body                 | The body of the release.                                                             |                 | `false`  |
-| discussionCategory   | The category for the discussion.                                                     | `announcements` | `false`  |
-| generateReleaseNotes | Indicates if release notes should be automatically generated.                        | `false`         | `false`  |
-| name                 | The version to create.                                                               |                 | `true`   |
-| prerelease           | Whether the release is a prerelease.                                                 | `false`         | `false`  |
-| tag                  | The tag to create.                                                                   |                 | `true`   |
-| token                | GitHub Token.                                                                        |                 | `true`   |
+| Name                 | Description                                                                                       | Default         | Required |
+|----------------------|---------------------------------------------------------------------------------------------------|-----------------|----------|
+| allowUpdates         | An optional flag which indicates if we should update a release if it already exists.              | `true`          | `false`  |
+| artifacts            | The artifacts to upload.                                                                          | `*artifacts/*`  | `false`  |
+| body                 | The body of the release.                                                                          |                 | `false`  |
+| changelog            | Whether to create a changelog file. The changelog will be generated from the GitHub releases API. | `true`          | `false`  |
+| changelogBranch      | The branch to store the changelog in.                                                             | `changelog`     | `false`  |
+| changelogFile        | The file to store the changelog in.                                                               | `CHANGELOG.md`  | `false`  |
+| discussionCategory   | The category for the discussion.                                                                  | `announcements` | `false`  |
+| generateReleaseNotes | Indicates if release notes should be automatically generated.                                     | `false`         | `false`  |
+| name                 | The version to create.                                                                            |                 | `true`   |
+| prerelease           | Whether the release is a prerelease.                                                              | `false`         | `false`  |
+| tag                  | The tag to create.                                                                                |                 | `true`   |
+| token                | GitHub Token.                                                                                     |                 | `true`   |
+
+## Outputs
+
+| Name      | Description                              |
+|-----------|------------------------------------------|
+| changelog | The contents of the generated changelog. |
 
 ## See Also
 
