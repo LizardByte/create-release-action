@@ -36,16 +36,22 @@ jobs:
         id: vars
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
+            changelog_branch=pr-changelogs
+            changelog_file=PR-${{ github.event.pull_request.number }}-CHANGELOG.md
             discussion_category=tests
             publish_pre_release=true
             release_tag=pr-${{ github.event.pull_request.number }}-${{ github.run_id }}
           else
+            changelog_branch=changelog
+            changelog_file=CHANGELOG.md
             discussion_category=announcements
             publish_pre_release=${{ steps.setup-release.outputs.publish_pre_release }}
             release_tag=${{ steps.setup-release.outputs.release_tag }}
           fi
 
           # set outputs
+          echo "changelog_branch=$changelog_branch" >> $GITHUB_OUTPUT
+          echo "changelog_file=$changelog_file" >> $GITHUB_OUTPUT
           echo "discussion_category=$discussion_category" >> $GITHUB_OUTPUT
           echo "publish_stable_release=$publish_stable_release" >> $GITHUB_OUTPUT
           echo "release_tag=$release_tag" >> $GITHUB_OUTPUT
@@ -57,6 +63,8 @@ jobs:
           allowUpdates: false
           artifacts: ''
           body: ''
+          changelogBranch: ${{ steps.vars.outputs.changelog_branch }}
+          changelogFile: ${{ steps.vars.outputs.changelog_file }}
           discussionCategory: ${{ steps.vars.outputs.discussion_category }}
           generateReleaseNotes: true
           name: ${{ steps.vars.outputs.release_tag }}
@@ -64,14 +72,17 @@ jobs:
           tag: ${{ steps.vars.outputs.release_tag }}
           token: ${{ secrets.GH_BOT_TOKEN }}
 
+      - name: Print changelog
+        run: |
+          echo "${{ steps.action.outputs.changelog }}"
+
       - name: Sleep
         if: ${{ always() && github.event_name == 'pull_request' }}
         run: sleep 60
 
       - name: Delete Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
         if: ${{ always() && github.event_name == 'pull_request' }}
         uses: dev-drprasad/delete-tag-and-release@v1.0.1
         with:
+          github_token: ${{ secrets.GH_BOT_TOKEN }}
           tag_name: ${{ steps.vars.outputs.release_tag }}
