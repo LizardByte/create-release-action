@@ -78,7 +78,7 @@ runs:
         inputs.changelog == 'true' &&
         (github.repository == 'LizardByte/create-release-action' ||
         (github.event_name == 'push' && github.ref == 'refs/heads/master'))
-      uses: actions/github-script@v6
+      uses: actions/github-script@v7
       with:
         github-token: ${{ inputs.token }}
         script: |
