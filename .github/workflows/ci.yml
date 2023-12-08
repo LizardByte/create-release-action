@@ -29,7 +29,8 @@ jobs:
         uses: LizardByte/setup-release-action@master  # keep this on master, to prevent endless depandabot PRs
         with:
           changelog_path: ./tests/data/set${{ matrix.set }}/CHANGELOG.md
-          fail_on_events_api_error: false
+          fail_on_events_api_error:  # PRs will fail if this is true
+            ${{ github.event_name == 'pull_request' && 'false' || 'true' }}
           github_token: ${{ secrets.GITHUB_TOKEN }}  # can use GITHUB_TOKEN for read-only access
 
       - name: Set action variables
