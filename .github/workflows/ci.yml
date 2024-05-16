@@ -83,7 +83,7 @@ jobs:
 
       - name: Delete Release
         if: ${{ always() && github.event_name == 'pull_request' }}
-        uses: dev-drprasad/delete-tag-and-release@v1.0.1
+        uses: dev-drprasad/delete-tag-and-release@v1.1
         with:
           github_token: ${{ secrets.GH_BOT_TOKEN }}
           tag_name: ${{ steps.vars.outputs.release_tag }}
