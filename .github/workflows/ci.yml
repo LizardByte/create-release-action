@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
 
 jobs:
@@ -28,7 +28,6 @@ jobs:
         id: setup-release
         uses: LizardByte/setup-release-action@master  # keep this on master, to prevent endless depandabot PRs
         with:
-          changelog_path: ./tests/data/set${{ matrix.set }}/CHANGELOG.md
           fail_on_events_api_error:  # PRs will fail if this is true
             ${{ github.event_name == 'pull_request' && 'false' || 'true' }}
           github_token: ${{ secrets.GITHUB_TOKEN }}  # can use GITHUB_TOKEN for read-only access
@@ -37,24 +36,15 @@ jobs:
         id: vars
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            changelog_branch=pr-changelogs
-            changelog_file=PR-${{ github.event.pull_request.number }}-CHANGELOG.md
             discussion_category=tests
-            publish_pre_release=true
             release_tag=pr-${{ github.event.pull_request.number }}-${{ github.run_id }}
           else
-            changelog_branch=changelog
-            changelog_file=CHANGELOG.md
             discussion_category=announcements
-            publish_pre_release=${{ steps.setup-release.outputs.publish_pre_release }}
             release_tag=${{ steps.setup-release.outputs.release_tag }}
           fi
 
           # set outputs
-          echo "changelog_branch=$changelog_branch" >> $GITHUB_OUTPUT
-          echo "changelog_file=$changelog_file" >> $GITHUB_OUTPUT
           echo "discussion_category=$discussion_category" >> $GITHUB_OUTPUT
-          echo "publish_stable_release=$publish_stable_release" >> $GITHUB_OUTPUT
           echo "release_tag=$release_tag" >> $GITHUB_OUTPUT
 
       - name: Run Action
@@ -64,18 +54,12 @@ jobs:
           allowUpdates: false
           artifacts: ''
           body: ''
-          changelogBranch: ${{ steps.vars.outputs.changelog_branch }}
-          changelogFile: ${{ steps.vars.outputs.changelog_file }}
           discussionCategory: ${{ steps.vars.outputs.discussion_category }}
           generateReleaseNotes: true
           name: ${{ steps.vars.outputs.release_tag }}
-          prerelease: ${{ steps.vars.outputs.publish_pre_release == 'true' }}
+          prerelease: true
           tag: ${{ steps.vars.outputs.release_tag }}
           token: ${{ secrets.GH_BOT_TOKEN }}
-
-      - name: Print changelog
-        run: |
-          echo "${{ steps.action.outputs.changelog }}"
 
       - name: Sleep
         if: ${{ always() && github.event_name == 'pull_request' }}
