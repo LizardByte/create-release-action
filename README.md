@@ -24,20 +24,21 @@ steps:
 
 ## Inputs
 
-| Name                   | Description                                                                                       | Default         | Required |
-|------------------------|---------------------------------------------------------------------------------------------------|-----------------|----------|
-| allowUpdates           | An optional flag which indicates if we should update a release if it already exists.              | `true`          | `false`  |
-| artifacts              | The artifacts to upload.                                                                          | `*artifacts/*`  | `false`  |
-| body                   | The body of the release.                                                                          |                 | `false`  |
-| deleteOtherPreReleases | Whether to delete other pre-releases.                                                             | `true`          | `false`  |
-| deletePreReleaseTags   | Whether to delete other pre-release tags.                                                         | `true`          | `false`  |
-| discussionCategory     | The category for the discussion.                                                                  | `announcements` | `false`  |
-| generateReleaseNotes   | Indicates if release notes should be automatically generated.                                     | `true`          | `false`  |
-| keepPreReleaseCount    | The number of pre-releases to keep.                                                               | `2`             | `false`  |
-| name                   | The version to create.                                                                            |                 | `true`   |
-| prerelease             | Whether the release is a prerelease.                                                              | `true`          | `false`  |
-| tag                    | The tag to create.                                                                                |                 | `true`   |
-| token                  | GitHub Token.                                                                                     |                 | `true`   |
+| Name                    | Description                                                                                          | Default         | Required |
+|-------------------------|------------------------------------------------------------------------------------------------------|-----------------|----------|
+| allowUpdates            | An optional flag which indicates if we should update a release if it already exists.                 | `true`          | `false`  |
+| artifactErrorsFailBuild | An optional flag which indicates if we should fail the build if there are errors with the artifacts. | `false`         | `false`  |
+| artifacts               | The artifacts to upload.                                                                             | `*artifacts/*`  | `false`  |
+| body                    | The body of the release.                                                                             |                 | `false`  |
+| deleteOtherPreReleases  | Whether to delete other pre-releases.                                                                | `true`          | `false`  |
+| deletePreReleaseTags    | Whether to delete other pre-release tags.                                                            | `true`          | `false`  |
+| discussionCategory      | The category for the discussion.                                                                     | `announcements` | `false`  |
+| generateReleaseNotes    | Indicates if release notes should be automatically generated.                                        | `true`          | `false`  |
+| keepPreReleaseCount     | The number of pre-releases to keep.                                                                  | `2`             | `false`  |
+| name                    | The version to create.                                                                               |                 | `true`   |
+| prerelease              | Whether the release is a prerelease.                                                                 | `true`          | `false`  |
+| tag                     | The tag to create.                                                                                   |                 | `true`   |
+| token                   | GitHub Token.                                                                                        |                 | `true`   |
 
 ## See Also
 

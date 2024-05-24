@@ -7,6 +7,10 @@ inputs:
     description: 'An optional flag which indicates if we should update a release if it already exists.'
     required: false
     default: 'true'
+  artifactErrorsFailBuild:
+    description: 'An optional flag which indicates if we should fail the build if there are errors with the artifacts.'
+    required: false
+    default: 'false'
   artifacts:
     description: 'The artifacts to upload.'
     required: false
@@ -59,7 +63,7 @@ runs:
       uses: ncipollo/release-action@v1.14.0
       with:
         allowUpdates: ${{ inputs.allowUpdates }}
-        artifactErrorsFailBuild: true
+        artifactErrorsFailBuild: ${{ inputs.artifactErrorsFailBuild }}
         artifacts: ${{ inputs.artifacts }}
         body: ${{ inputs.body }}
         commit: ${{ github.sha }}
