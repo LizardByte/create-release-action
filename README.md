@@ -4,9 +4,9 @@
 A reusable action to create a GitHub release. This action is tailored to the
 @LizardByte organization, but can be used by anyone if they follow the same conventions.
 
-This is basically a wrapper around [ncipollo/release-action](https://github.com/ncipollo/release-action)
-and [dev-drprasad/delete-older-releases](https://github.com/dev-drprasad/delete-older-releases), with some
-different defaults to make it easier to use within the @LizardByte organization.
+This is basically a wrapper around [ncipollo/release-action](https://github.com/ncipollo/release-action),
+with some different defaults to make it easier to use within the @LizardByte organization.
+Additionally, all except the 2 (configurable) latest pre-releases and tags are deleted.
 
 ## Basic Usage
 
