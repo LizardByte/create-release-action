@@ -66,8 +66,8 @@ jobs:
         run: sleep 60
 
       - name: Delete Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
         if: ${{ always() && github.event_name == 'pull_request' }}
-        uses: dev-drprasad/delete-tag-and-release@v1.1
-        with:
-          github_token: ${{ secrets.GH_BOT_TOKEN }}
-          tag_name: ${{ steps.vars.outputs.release_tag }}
+        run: |
+          gh release delete ${{ steps.vars.outputs.release_tag }} --cleanup-tag --yes

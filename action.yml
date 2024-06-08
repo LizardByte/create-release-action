@@ -86,11 +86,77 @@ runs:
       if: >-
         inputs.deleteOtherPreReleases == 'true' &&
         (github.event_name == 'push' && github.ref == 'refs/heads/master')
-      uses: dev-drprasad/delete-older-releases@v0.3.4
-      with:
-        keep_latest: ${{ inputs.keepPreReleaseCount }}
-        delete_prerelease_only: true
-        delete_tag_pattern: v(\d{4,})\.(\d{1,4})\.(\d{1,6})(\.(\d{1,2}))?
-        delete_tags: ${{ inputs.deletePreReleaseTags }}
+      uses: actions/github-script@v7
       env:
-        GITHUB_TOKEN: ${{ inputs.token }}
+        DELETE_TAGS: ${{ inputs.deletePreReleaseTags }}
+        KEEP_LATEST: ${{ inputs.keepPreReleaseCount }}
+      with:
+        github-token: ${{ inputs.token }}
+        script: |
+          // process input
+          const DELETE_TAGS = process.env.DELETE_TAGS.toLowerCase() === 'true';
+          const KEEP_LATEST = parseInt(process.env.KEEP_LATEST, 10);
+
+          console.log(`DELETE_TAGS: ${DELETE_TAGS}`);
+          console.log(`KEEP_LATEST: ${KEEP_LATEST}`);
+
+          let regexPattern = new RegExp('^v(\\d{4,})\\.(\\d{1,4})\\.(\\d{1,6})(\\.(\\d{1,2}))?');
+
+          // list releases
+          const repoOpts = github.rest.repos.listReleases.endpoint.merge({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+          });
+          const allReleases = await github.paginate(repoOpts);
+
+          allReleases.forEach(release => {
+            console.log(`Release: ${release.tag_name}`);
+            console.log(`Is pre-release: ${release.prerelease}`);
+            console.log(`Matches regex: ${regexPattern.test(release.tag_name)}`);
+          });
+
+          let preReleases = allReleases.filter(release => release.prerelease && regexPattern.test(release.tag_name));
+          console.log('Matched Pre-release tags:', preReleases.map(release => release.tag_name));
+
+          // sort by tag/version number (e.g. v1.2.3 or v1.2.3.4)
+          preReleases.sort((a, b) => {
+            const aParts = a.tag_name.split('.').map(Number);
+            const bParts = b.tag_name.split('.').map(Number);
+            for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+                if (aParts[i] === undefined) return -1;
+                if (bParts[i] === undefined) return 1;
+                if (aParts[i] < bParts[i]) return -1;
+                if (aParts[i] > bParts[i]) return 1;
+            }
+            return 0;
+          });
+
+          // delete all but the last n pre-releases
+          for (let i = 0; i < preReleases.length - KEEP_LATEST; i++) {
+            const release = preReleases[i];
+            console.log(`Deleting release: ${release.tag_name}`);
+            try {
+              await github.rest.repos.deleteRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: release.id
+              });
+            } catch (error) {
+              console.error(`Failed to delete release: ${release.tag_name}`);
+              console.error(error);
+            }
+
+            if (DELETE_TAGS) {
+              console.log(`Deleting tag: ${release.tag_name}`);
+              try {
+                await github.rest.git.deleteRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: `tags/${release.tag_name}`
+                });
+              } catch (error) {
+                console.error(`Failed to delete tag: ${release.tag_name}`);
+                console.error(error);
+              }
+            }
+          }
