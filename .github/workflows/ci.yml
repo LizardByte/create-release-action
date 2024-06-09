@@ -53,9 +53,9 @@ jobs:
         with:
           allowUpdates: false
           artifacts: ''
-          body: ''
+          body: ${{ steps.setup-release.outputs.release_body }}
           discussionCategory: ${{ steps.vars.outputs.discussion_category }}
-          generateReleaseNotes: true
+          generateReleaseNotes: ${{ steps.setup-release.outputs.release_generate_release_notes }}
           name: ${{ steps.vars.outputs.release_tag }}
           prerelease: true
           tag: ${{ steps.vars.outputs.release_tag }}
