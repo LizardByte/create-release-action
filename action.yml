@@ -46,6 +46,10 @@ inputs:
     description: 'Whether the release is a prerelease.'
     required: false
     default: 'true'
+  sleepDuration:
+    description: 'The duration to sleep in seconds before deleting tags.'
+    required: false
+    default: '15'
   tag:
     description: 'The tag to create.'
     required: true
@@ -90,12 +94,14 @@ runs:
       env:
         DELETE_TAGS: ${{ inputs.deletePreReleaseTags }}
         KEEP_LATEST: ${{ inputs.keepPreReleaseCount }}
+        SLEEP_DURATION: ${{ inputs.sleepDuration }}
       with:
         github-token: ${{ inputs.token }}
         script: |
           // process input
           const DELETE_TAGS = process.env.DELETE_TAGS.toLowerCase() === 'true';
           const KEEP_LATEST = parseInt(process.env.KEEP_LATEST, 10);
+          const SLEEP_DURATION = parseInt(process.env.SLEEP_DURATION, 10);
 
           console.log(`DELETE_TAGS: ${DELETE_TAGS}`);
           console.log(`KEEP_LATEST: ${KEEP_LATEST}`);
@@ -145,8 +151,14 @@ runs:
               console.error(`Failed to delete release: ${release.tag_name}`);
               console.error(error);
             }
+          }
 
-            if (DELETE_TAGS) {
+          // sleep to allow any on release deleted event workflow runs to be created
+          // if the tag is deleted before the workflow run is created, the run will fail to be created
+          await new Promise(resolve => setTimeout(resolve, SLEEP_DURATION * 1000));
+
+          if (DELETE_TAGS) {
+            for (let i = 0; i < preReleases.length - KEEP_LATEST; i++) {
               console.log(`Deleting tag: ${release.tag_name}`);
               try {
                 await github.rest.git.deleteRef({

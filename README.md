@@ -37,6 +37,7 @@ steps:
 | keepPreReleaseCount     | The number of pre-releases to keep.                                                                  | `2`             | `false`  |
 | name                    | The version to create.                                                                               |                 | `true`   |
 | prerelease              | Whether the release is a prerelease.                                                                 | `true`          | `false`  |
+| sleepDuration           | The duration to sleep in seconds before deleting tags.                                               | `15`            | `false`  |
 | tag                     | The tag to create.                                                                                   |                 | `true`   |
 | token                   | GitHub Token.                                                                                        |                 | `true`   |
 
