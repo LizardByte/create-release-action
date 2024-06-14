@@ -159,6 +159,7 @@ runs:
 
           if (DELETE_TAGS) {
             for (let i = 0; i < preReleases.length - KEEP_LATEST; i++) {
+              const release = preReleases[i];
               console.log(`Deleting tag: ${release.tag_name}`);
               try {
                 await github.rest.git.deleteRef({
