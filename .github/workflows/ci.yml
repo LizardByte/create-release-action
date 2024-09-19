@@ -28,23 +28,20 @@ jobs:
         id: setup-release
         uses: LizardByte/setup-release-action@master  # keep this on master, to prevent endless depandabot PRs
         with:
-          fail_on_events_api_error:  # PRs will fail if this is true
-            ${{ github.event_name == 'pull_request' && 'false' || 'true' }}
+          # PRs will fail if this is true
+          fail_on_events_api_error: ${{ github.event_name == 'pull_request' && 'false' || 'true' }}
           github_token: ${{ secrets.GITHUB_TOKEN }}  # can use GITHUB_TOKEN for read-only access
 
       - name: Set action variables
         id: vars
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            discussion_category=tests
             release_tag=pr-${{ github.event.pull_request.number }}-${{ github.run_id }}
           else
-            discussion_category=announcements
             release_tag=${{ steps.setup-release.outputs.release_tag }}
           fi
 
           # set outputs
-          echo "discussion_category=$discussion_category" >> $GITHUB_OUTPUT
           echo "release_tag=$release_tag" >> $GITHUB_OUTPUT
 
       - name: Run Action
@@ -54,7 +51,6 @@ jobs:
           allowUpdates: false
           artifacts: ''
           body: ${{ steps.setup-release.outputs.release_body }}
-          discussionCategory: ${{ steps.vars.outputs.discussion_category }}
           generateReleaseNotes: ${{ steps.setup-release.outputs.release_generate_release_notes }}
           name: ${{ steps.vars.outputs.release_tag }}
           prerelease: true

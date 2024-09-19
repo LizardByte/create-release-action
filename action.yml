@@ -27,10 +27,6 @@ inputs:
     description: 'Whether to delete other pre-releases tags.'
     required: false
     default: 'true'
-  discussionCategory:
-    description: 'The category of the discussion.'
-    required: false
-    default: 'announcements'
   generateReleaseNotes:
     description: 'Indicates if release notes should be automatically generated.'
     required: false
@@ -71,7 +67,6 @@ runs:
         artifacts: ${{ inputs.artifacts }}
         body: ${{ inputs.body }}
         commit: ${{ github.sha }}
-        discussionCategory: ${{ inputs.discussionCategory }}
         generateReleaseNotes: ${{ inputs.generateReleaseNotes }}
         name: ${{ inputs.name }}
         prerelease: ${{ inputs.prerelease }}
