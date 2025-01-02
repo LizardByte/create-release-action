@@ -121,16 +121,19 @@ runs:
 
           // sort by tag/version number (e.g. v1.2.3 or v1.2.3.4)
           preReleases.sort((a, b) => {
-            const aParts = a.tag_name.split('.').map(Number);
-            const bParts = b.tag_name.split('.').map(Number);
+            const aParts = a.tag_name.match(/\d+/g).map(Number);
+            const bParts = b.tag_name.match(/\d+/g).map(Number);
             for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
-                if (aParts[i] === undefined) return -1;
-                if (bParts[i] === undefined) return 1;
-                if (aParts[i] < bParts[i]) return -1;
-                if (aParts[i] > bParts[i]) return 1;
+              if (aParts[i] === undefined) return -1;
+              if (bParts[i] === undefined) return 1;
+              if (aParts[i] < bParts[i]) return -1;
+              if (aParts[i] > bParts[i]) return 1;
             }
             return 0;
           });
+
+          // Output sorted pre-releases
+          console.log('Sorted Pre-release tags:', preReleases.map(release => release.tag_name));
 
           // delete all but the last n pre-releases
           for (let i = 0; i < preReleases.length - KEEP_LATEST; i++) {
