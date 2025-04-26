@@ -1,12 +1,19 @@
 ---
 name: CI
+permissions:
+  contents: write
 
 on:
   pull_request:
-    branches: [master]
-    types: [opened, synchronize, reopened]
+    branches:
+      - master
+    types:
+      - opened
+      - synchronize
+      - reopened
   push:
-    branches: [master]
+    branches:
+      - master
   workflow_dispatch:
 
 concurrency:
@@ -26,7 +33,7 @@ jobs:
 
       - name: Setup Release
         id: setup-release
-        uses: LizardByte/setup-release-action@master  # keep this on master, to prevent endless depandabot PRs
+        uses: LizardByte/setup-release-action@master  # keep this on master, to prevent endless dependabot PRs
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}  # can use GITHUB_TOKEN for read-only access
 
@@ -56,12 +63,11 @@ jobs:
           token: ${{ secrets.GH_BOT_TOKEN }}
 
       - name: Sleep
-        if: ${{ always() && github.event_name == 'pull_request' }}
+        if: always() && github.event_name == 'pull_request'
         run: sleep 60
 
       - name: Delete Release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
-        if: ${{ always() && github.event_name == 'pull_request' }}
-        run: |
-          gh release delete ${{ steps.vars.outputs.release_tag }} --cleanup-tag --yes
+        if: always() && github.event_name == 'pull_request'
+        run: gh release delete ${{ steps.vars.outputs.release_tag }} --cleanup-tag --yes
