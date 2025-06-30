@@ -60,7 +60,7 @@ runs:
       if: >-
         github.repository == 'LizardByte/create-release-action' ||
         (github.event_name == 'push' && github.ref == 'refs/heads/master')
-      uses: ncipollo/release-action@v1.16.0
+      uses: ncipollo/release-action@v1.18.0
       with:
         allowUpdates: ${{ inputs.allowUpdates }}
         artifactErrorsFailBuild: ${{ inputs.artifactErrorsFailBuild }}
